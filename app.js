@@ -1,10 +1,12 @@
 var express = require('express');
 var routes = require('./routes');
-var http = require('fs');
+var http = require('http');
 var path = require('path');
 var mongoose = require('mongoose');
-var mydata = require('./data/myfiles');
+var db = require('./models/db_operations.js');
+var userRegistry = require('./models/users_registry.js');
 var app = express();
+
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -14,32 +16,32 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 
-var userList = [];
-function user(id) {
-  this.id = id;
-  this.genres = {};
-  this.follows = {};
-  this.musicList = {};
+
+app.post('/listen', routes.listen.listenToMusic);
+
+
+/*app.post('/follow', function(req, res) {
+	var b = req.body;
+	var from = b.from, to = b.to;
+	mydata.followUser(from, to);
+	res.send(200);
+
+});
+
+app.get('/recommendations:user', function (req, res) {
+	var user = req.params.user;
+	var arr = mydata.recommendMusic(user);
+	res.setHeader('Content-Type', 'application/json');
+	var s = {"list":  arr};
+	var str = JSON.stringify(s);
+	console.log(str);
+	res.end(str);
+})
+*/
+
+var startServer = function () {
+	app.server = http.createServer(app);
+	app.server.listen(3000);
 }
 
-function findUserById(id) {
-	return userList.map(function(e) { return e.id; }).indexOf(id);
-}
-function userExists(id) {
-	return (findUserById(id) != -1); 
-}
-function addUser(id) {
-	userList.push(new user(id));
-}
-function addEntry(id, key, value) {
-	var index = findUserById(id);
-	var obj = userList[index];
-	obj[key][value] = true;
-}
-for (var i = 0; i < 5; ++i)
-	addUser(i);
-
-addEntry(3, "follows", "hamada");
-addEntry(3, "follows", "hamada");
-
-console.log(userExists(32)); 
+db.openDB('axiomZen', startServer);
