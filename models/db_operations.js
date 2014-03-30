@@ -9,7 +9,6 @@ var mongoose = require('mongoose'),
     ;
 
 
-
 initUserSchema = function() {
     userSchema = new mongoose.Schema({
         _userId     :    { type : String, unique : true  },
@@ -36,6 +35,7 @@ initUserSchema = function() {
             for (var i = 0; i < ret._musicTags.length; i++) {
                 var musicTagsEntry = ret._musicTags[i];
                 myRet.musicTags[musicTagsEntry.key] = musicTagsEntry.value;
+                myRet.totalTagCount += musicTagsEntry.value;
             }
             for (var i = 0; i < ret._followees.length; i++) {
                 myRet.followees.push(ret._followees[i]);
@@ -123,7 +123,7 @@ updateRecordInDB = function(db_id, property, key, value) {
     });    
 }
 
-addElementToArray = function(user_id, property, value) {
+addToArrayInDB = function(user_id, property, value) {
     var updateObject = {};
     updateObject['_' + property] = value;
     console.log("in array", updateObject);
@@ -144,6 +144,5 @@ module.exports.createUserDocument = createUserDocument;
 module.exports.getFromDB = getFromDB;
 module.exports.insertRecordInDB = insertRecordInDB;
 module.exports.updateRecordInDB = updateRecordInDB;
-
-module.exports.addElementToArray = addElementToArray;
+module.exports.addToArrayInDB = addToArrayInDB;
 
