@@ -18,7 +18,11 @@ app.use(app.router);
 
 
 app.post('/listen', routes.listen.listenToMusic);
-
+app.post('/follow', routes.follow.followUser);
+app.get('/show', function(req, res) {
+	userRegistry.showAll();
+	res.end(200);
+});
 
 /*app.post('/follow', function(req, res) {
 	var b = req.body;
