@@ -1,14 +1,10 @@
-
-/*
- * GET home page.
- */
 var musicStore = require('../models/music_store.js'),
     userRegistry = require('../models/users_registry.js'),
     db = require('../models/db_operations.js');
     ;
 
 
-exports.listenToMusic = function(req, res) {
+listenToMusic = function(req, res) {
     var user = req.body.user, music = req.body.music;
 
     var err = listen(user, music);
@@ -56,3 +52,4 @@ listen = function(user_id, current_music) {
     }
 }
 
+module.exports.listenToMusic = listenToMusic;

@@ -8,6 +8,7 @@ function UserRecord(user_id) {
     this.dbId = undefined;
     this.listenedTo = {};
     this.musicTags = {};
+    this.followees = [];
 }
 
 UserRecord.prototype.hasListenedTo = function(music_title) {
@@ -26,7 +27,7 @@ UserRecord.prototype.isListeningTo = function(music_title) {
     this.listenedTo[music_title] = 1;
 }
 
-UserRecord.prototype.hasMusicTag= function(tag) {
+UserRecord.prototype.hasMusicTag = function(tag) {
     return this.musicTags.hasOwnProperty(tag);
 }
 
@@ -40,6 +41,10 @@ UserRecord.prototype.incrementTagCountOf = function(tag) {
 
 UserRecord.prototype.addTag = function(tag) {
     this.musicTags[tag] = 1;
+}
+
+UserRecord.prototype.addFollowee = function(followee_id) {
+    this.followees.push(followee_id);
 }
 
 getUser = function(user_id) {
@@ -63,6 +68,9 @@ createUser = function(user_id, callback) {
     console.log("createUser", user_id);  
 }
 
+module.exports.showAll = function() {
+    console.log("showing all----------------", usersRegistry);
+}
 module.exports.UserRecord = UserRecord;
 module.exports.addUser = addUser;
 module.exports.getUser = getUser;

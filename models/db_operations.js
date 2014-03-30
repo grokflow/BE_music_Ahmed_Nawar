@@ -15,7 +15,7 @@ initUserSchema = function() {
         _userId     :    { type : String, unique : true  },
         _listenedTo :    [{ key : String, value : Number }],
         _musicTags  :    [{ key : String, value : Number }],
-        //followees : { type : Array , "default" : [] },
+        _followees  :    [String],
     });
 
     userDocument = mongoose.model('users', userSchema);
@@ -36,6 +36,9 @@ initUserSchema = function() {
             for (var i = 0; i < ret._musicTags.length; i++) {
                 var musicTagsEntry = ret._musicTags[i];
                 myRet.musicTags[musicTagsEntry.key] = musicTagsEntry.value;
+            }
+            for (var i = 0; i < ret._followees.length; i++) {
+                myRet.followees.push(ret._followees[i]);
             }
             
             return myRet;
@@ -120,6 +123,20 @@ updateRecordInDB = function(db_id, property, key, value) {
     });    
 }
 
+addElementToArray = function(user_id, property, value) {
+    var updateObject = {};
+    updateObject['_' + property] = value;
+    console.log("in array", updateObject);
+    userDocument.update({_userId: user_id }, { $push : updateObject}, function (err, affected_users) {
+        if (affected_users) {
+            console.log("affected_users element array: ", affected_users);
+        } else {
+            console.log("sad day");
+        }
+    });   
+
+}
+
 initUserSchema();
 
 module.exports.openDB = openDB;
@@ -128,4 +145,5 @@ module.exports.getFromDB = getFromDB;
 module.exports.insertRecordInDB = insertRecordInDB;
 module.exports.updateRecordInDB = updateRecordInDB;
 
+module.exports.addElementToArray = addElementToArray;
 
