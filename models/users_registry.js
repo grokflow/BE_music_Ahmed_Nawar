@@ -59,6 +59,7 @@ UserRecord.prototype.discoverFolloweesMusic = function(callback) {
 
     var followeesMusicList = {}, followeesCount = remainingFollowees = this.followees.length,
         thisUser = this;
+
     if (followeesCount == 0)
         callback(this, {});
 
@@ -104,7 +105,6 @@ addUser = function(user_id, record_details) {
 }
 
 createUser = function(user_id, callback) {
-    //db op
     var newUserRecord = new UserRecord(user_id);
     addUser(user_id, newUserRecord);
     db.createUserDocument(user_id, callback);

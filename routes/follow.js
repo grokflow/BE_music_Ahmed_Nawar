@@ -3,14 +3,10 @@ var userRegistry = require('../models/users_registry.js'),
     followUser
     ;
 
-    followUser = function(req, res) {
+followUser = function(req, res) {
         var from = req.body.from, to = req.body.to;
-
-        var err = follow(from, to);
-    //WRONG, need a callback if i were to return errors 
-    if (err) res.send(err);
-    else res.send(200);
-
+        follow(from, to);
+        res.send(200);
 }
 
 follow = function (from_userID, to_userID) {

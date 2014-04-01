@@ -6,12 +6,8 @@ var musicStore = require('../models/music_store.js'),
 
 listenToMusic = function(req, res) {
     var user = req.body.user, music = req.body.music;
-
-    var err = listen(user, music);
-    //WRONG, need a callback if i were to return errors 
-    if (err) res.send(err);
-    else res.send(200);
-
+    listen(user, music);
+    res.send(200);
 }
 
 listen = function(user_id, current_music) {

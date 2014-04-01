@@ -25,27 +25,29 @@ initUserSchema = function() {
         
         delete ret.__v;
         if (doc instanceof  userDocument) {
-            var myRet = new userRegistry.UserRecord(ret._userId);
-            myRet.dbId = ret._id;
+            var resultantUserObject = new userRegistry.UserRecord(ret._userId);
+            resultantUserObject.dbId = ret._id;
 
             for (var i = 0; i < ret._listenedTo.length; i++) {
                 var listenedToEntry = ret._listenedTo[i];
-                myRet.listenedTo[listenedToEntry.key] = listenedToEntry.value;
+                resultantUserObject.listenedTo[listenedToEntry.key] = listenedToEntry.value;
             }
             for (var i = 0; i < ret._musicTags.length; i++) {
                 var musicTagsEntry = ret._musicTags[i];
-                myRet.musicTags[musicTagsEntry.key] = musicTagsEntry.value;
-                myRet.totalTagCount += musicTagsEntry.value;
+                resultantUserObject.musicTags[musicTagsEntry.key] = musicTagsEntry.value;
+                resultantUserObject.totalTagCount += musicTagsEntry.value;
             }
             for (var i = 0; i < ret._followees.length; i++) {
-                myRet.followees.push(ret._followees[i]);
+                resultantUserObject.followees.push(ret._followees[i]);
             }
             
-            return myRet;
+            return resultantUserObject;
         } 
     }
 }
 
+//better error handling
+//the callback can take an error message as parameter
 openDB = function (db_name, callback) { 
     var dbConnectionString = "mongodb://localhost/" + db_name;
     mongoose.connect(dbConnectionString, function(err, res) {
@@ -55,7 +57,6 @@ openDB = function (db_name, callback) {
             console.log ('Successfully connected to: ' + db_name);
             callback();
         }
-          //better error handling
     });
 }
 
@@ -87,9 +88,9 @@ getFromDB = function(user_id, callback) {
     });
 }
 
-insertRecordInDB = function(db_id, property, key, value) {
-    console.log("insert", db_id);
-    var id = mongoose.Types.ObjectId(db_id.toString()), updateObject = {};
+insertRecordInDB = function(user_db_id, property, key, value) {
+    console.log("insert", user_db_id);
+    var id = mongoose.Types.ObjectId(user_db_id.toString()), updateObject = {};
 
     updateObject['_' + property] = { 'key': key, 'value': value };
     
@@ -104,10 +105,10 @@ insertRecordInDB = function(db_id, property, key, value) {
     });    
 }
 
-updateRecordInDB = function(db_id, property, key, value) {
+updateRecordInDB = function(user_db_id, property, key, value) {
         console.log("update", property);
 
-    var id = mongoose.Types.ObjectId(db_id.toString()), queryObject = {}, updateObject = {};
+    var id = mongoose.Types.ObjectId(user_db_id.toString()), queryObject = {}, updateObject = {};
     queryObject._id =  id;
     queryObject['_' + property + '.key'] = key;
     updateObject['_' + property + '.$'] = { 'key': key, 'value': value };
@@ -115,11 +116,7 @@ updateRecordInDB = function(db_id, property, key, value) {
     console.log("updateObject in update", updateObject);
     
     userDocument.update(queryObject, { $set : updateObject}, function (err, affected_users) {
-        if (affected_users) {
-            console.log("affected_users update: ", affected_users);
-        } else {
-            console.log("sad day");
-        }
+        //log error
     });    
 }
 
@@ -128,11 +125,7 @@ addToArrayInDB = function(user_id, property, value) {
     updateObject['_' + property] = value;
     console.log("in array", updateObject);
     userDocument.update({_userId: user_id }, { $push : updateObject}, function (err, affected_users) {
-        if (affected_users) {
-            console.log("affected_users element array: ", affected_users);
-        } else {
-            console.log("sad day");
-        }
+        //log error
     });   
 
 }
