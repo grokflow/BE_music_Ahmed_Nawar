@@ -72,9 +72,9 @@ recommend = function(user_id, callback) {
     }
 
     function rateMusic(current_user, followees_music_list) {
-
-        recommendationList = initRecommendationList(RECOMMENDATIONS_COUNT);
+        
         musicList = musicStore.getAllMusic();
+        recommendationList = initRecommendationList(musicList.length < 5 ? musicList.length : RECOMMENDATIONS_COUNT);
         console.log(followees_music_list);
 
         for (var i = 0; i < musicList.length; i++) {
