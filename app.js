@@ -27,3 +27,5 @@ var startServer = function () {
 }
 
 db.openDB('axiomZen', startServer);
+
+module.exports = app;  
