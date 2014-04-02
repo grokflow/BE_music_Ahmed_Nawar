@@ -1,11 +1,8 @@
+var	db = require('./models/db_operations.js');
+var	http = require('http');
+var	routes = require('./routes');
 var express = require('express');
-var routes = require('./routes');
-var http = require('http');
-var path = require('path');
-var mongoose = require('mongoose');
-var db = require('./models/db_operations.js');
-var userRegistry = require('./models/users_registry.js');
-var app = express();
+var	app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -21,11 +18,18 @@ app.post('/follow', routes.follow.followUser);
 app.get('/recommendations', routes.recommendationEngine.recommendMusic);
 
 
-var startServer = function () {
+var startServer = function (err) {
+	if (err) {
+		console.log('Error: unable to start server, database issue: ', err);
+		console.log('Exiting Now :(');
+		process.exit(1);
+	}
     app.server = http.createServer(app);
-    app.server.listen(3000);
+    app.server.listen(app.get('port'), function() {
+  		console.log('Express server listening on port ' + app.get('port'));
+	});
 }
 
-db.openDB('axiomZen', startServer);
-
+//start the server after connecting to the database server
+db.openDB('AxiomZenDB', startServer);
 module.exports = app;  
