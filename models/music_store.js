@@ -1,8 +1,7 @@
-var file = './data/musics.json',
-    musicFile = require('fs').readFileSync(file, 'utf8'),
-    musicStore,
-    getGenresForMusic;
-    ;
+var file = './data/musics.json';
+var getGenresForMusic;
+var musicFile = require('fs').readFileSync(file, 'utf8');
+var musicStore;
 
 musicStore = JSON.parse(musicFile);
 

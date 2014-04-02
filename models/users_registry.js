@@ -1,6 +1,8 @@
-var usersRegistry = {},
-	db = require('./db_operations.js')
-	;
+var addUser;
+var createUser;
+var db = require('./db_operations.js');
+var getUser;
+var usersRegistry = {};
 
 
 function UserRecord(user_id) {
@@ -10,7 +12,6 @@ function UserRecord(user_id) {
     this.listenedTo = {};
     this.musicTags = {};
     this.followees = [];
-
 }
 
 UserRecord.prototype.hasListenedTo = function(music_title) {
@@ -57,17 +58,16 @@ UserRecord.prototype.addFollowee = function(followee_id) {
 
 UserRecord.prototype.discoverFolloweesMusic = function(callback) {
 
-    var followeesMusicList = {}, followeesCount = remainingFollowees = this.followees.length,
-        thisUser = this;
+    var followeesMusicList = {}, followeesCount = remainingFollowees = this.followees.length;
+    var thisUser = this;
 
     if (followeesCount == 0)
         callback(this, {});
 
-        console.log("remaining", remainingFollowees);
-
     for (var i = 0; i < followeesCount; i++) {
         var followeeId = this.followees[i];
         var followee = getUser(followeeId);
+
         if (followee === undefined) {
             db.getFromDB(followeeId, compileFolloweesMusicList);
         } else {
@@ -76,11 +76,10 @@ UserRecord.prototype.discoverFolloweesMusic = function(callback) {
 
     }
     function compileFolloweesMusicList(current_followee) {
-        console.log("remaining", remainingFollowees);
-        remainingFollowees--;
         var musicCollection = current_followee.listenedTo;
+        remainingFollowees--;
         
-        for (var music in  musicCollection) {
+        for (var music in musicCollection) {
             if (musicCollection.hasOwnProperty(music)) {
                 if (thisUser.hasListenedTo(music) === false)
                     followeesMusicList[music] = true;
@@ -92,24 +91,20 @@ UserRecord.prototype.discoverFolloweesMusic = function(callback) {
     }
 
 }
-getUser = function(user_id) {
-    console.log("getUserFromRegistry", user_id);
 
+getUser = function(user_id) {
     return usersRegistry[user_id];
 }
 
 addUser = function(user_id, record_details) {
-    console.log("addUserToRegistry", user_id, record_details);
-
     usersRegistry[user_id] = record_details;
 }
 
 createUser = function(user_id, callback) {
     var newUserRecord = new UserRecord(user_id);
+
     addUser(user_id, newUserRecord);
     db.createUserDocument(user_id, callback);
-
-    console.log("createUser", user_id);  
 }
 
 

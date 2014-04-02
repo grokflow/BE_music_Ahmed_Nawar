@@ -1,7 +1,7 @@
-var userRegistry = require('../models/users_registry.js'),
-    db = require('../models/db_operations.js'),
-    followUser
-    ;
+var db = require('../models/db_operations.js');
+var follow;
+var followUser;
+var userRegistry = require('../models/users_registry.js');
 
 followUser = function(req, res) {
         var from = req.body.from, to = req.body.to;
@@ -35,7 +35,6 @@ follow = function (from_userID, to_userID) {
             toUser = user;
 
         if (fromUser && toUser) {
-            console.log("callback", fromUser, toUser);
             fromUser.addFollowee(to_userID);
             db.addToArrayInDB(from_userID, 'followees', to_userID);
         }
