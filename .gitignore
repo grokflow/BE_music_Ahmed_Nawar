@@ -1,4 +1,5 @@
 *.sublime-project
 *.sublime-workspace
 *.curl
+*.log
 node_modules/
