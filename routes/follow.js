@@ -28,7 +28,7 @@ follow = function (from_userID, to_userID) {
         registerFollowee(toUser);
     }
 
-    function registerFollowee (user)  {
+    function registerFollowee (user) {
         if (user.userId === from_userID)
             fromUser = user;
         else if (user.userId === to_userID)

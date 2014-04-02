@@ -7,13 +7,12 @@ describe('AxiomZen Music Recommendations Engine Test', function () {
 
     var followDataFilePath = __dirname + '/data/follows.json';
     var listenDataFilePath = __dirname + '/data/listen.json';
-    //change names?
 
     before(function () {
-        file = fs.readFileSync(followDataFilePath);
+        file = fs.readFileSync(followDataFilePath, 'utf8');
         followData = JSON.parse(file);
 
-        file = fs.readFileSync(listenDataFilePath);
+        file = fs.readFileSync(listenDataFilePath, 'utf8');
         listenData = JSON.parse(file);
     })
 

@@ -1,18 +1,26 @@
 var musicStore = require('../models/music_store.js'),
     userRegistry = require('../models/users_registry.js'),
-    db = require('../models/db_operations.js');
+    db = require('../models/db_operations.js'),
+    listen
+
     ;
 
 
 listenToMusic = function(req, res) {
     var user = req.body.user, music = req.body.music;
-    listen(user, music);
-    res.send(200);
+    listen(user, music, function(err) {
+        if (err) res.send(500, err);
+
+        res.send(200);
+    });
 }
 
-listen = function(user_id, current_music) {
+listen = function(user_id, current_music, callback) {
     var musicTags = musicStore.getTagsFor(current_music);
-    if (musicTags === undefined) return "err";
+    if (musicTags === undefined) {
+        callback('music not found'); 
+        return;
+    }
     
     var user = userRegistry.getUser(user_id);
     if (user === undefined) { 
@@ -46,6 +54,7 @@ listen = function(user_id, current_music) {
         }
 
     }
+    callback(null);
 }
 
 module.exports.listenToMusic = listenToMusic;
