@@ -1,18 +1,21 @@
 {
-  "name": "axiom",
+  "name": "axiom-music-recommendation",
   "version": "0.0.1",
+  "author": "Ahmed Nawar",
+  "description": "A Basic Music Recommendation Engine using Node.js",
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "make test"
+    "test": "make axiom"
   },
   "dependencies": {
     "express": "3.5.0",
     "mongoose": "3.8.8",
-    "mongodb": "*",
-    "supertest": "^0.10.0"
+    "mongodb": "2.4.9"
   },
   "devDependencies": {
-    "mocha": "1.18.2"
+    "mocha": "1.18.2",
+    "supertest": "^0.10.0"
+
   }
 }
