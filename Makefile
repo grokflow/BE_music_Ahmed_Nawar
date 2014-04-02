@@ -1,4 +1,4 @@
-test:
+axiom:
 	@./node_modules/.bin/mocha
 
-.PHONY: test
+.PHONY: axiom
