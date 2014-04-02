@@ -39,7 +39,7 @@ describe('AxiomZen Music Recommendations Engine Test', function () {
         }
 
          //feed listen.json to POST/listen endpoint 
-        var userIds = listenData['userIds'];
+       var userIds = listenData['userIds'];
 
         for (var id in userIds) {
             var musicList = userIds[id];
@@ -69,6 +69,5 @@ describe('AxiomZen Music Recommendations Engine Test', function () {
                 console.log(JSON.stringify(res.body, null, 3));
                 done();
             });
-		
-    });
+	 });
 })
