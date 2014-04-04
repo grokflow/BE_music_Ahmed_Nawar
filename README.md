@@ -4,7 +4,7 @@ BE_music_Ahmed_Nawar
 Basic Music Recommendation Engine using Node.js
 
 ## Installation
-  - Clone this repository to your machine.
+  - Clone this Git repository to your machine.
   - Change directory in the terminal `cd` to the repository directory.
   - Issue the command `npm install` to install all dependencies.
   - If MongoDB is not installed, follow the instructions [here](http://docs.mongodb.org/manual/installation/)
