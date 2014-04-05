@@ -1,11 +1,11 @@
 var file = './data/musics.json';
-var getGenresForMusic;
+var getGenresFor;
 var musicFile = require('fs').readFileSync(file, 'utf8');
 var musicStore;
 
 musicStore = JSON.parse(musicFile);
 
-getTagsFor = function(music_title) {
+getGenresFor = function(music_title) {
     return musicStore[music_title];
 }
 
@@ -19,5 +19,5 @@ getAllMusic = function() {
   	return musicList;
 }
 
-module.exports.getTagsFor = getTagsFor;
+module.exports.getGenresFor = getGenresFor;
 module.exports.getAllMusic = getAllMusic;
