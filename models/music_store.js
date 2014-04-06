@@ -1,3 +1,8 @@
+/*
+	This file is responsible for loading the musics.json files into memory upon startup.
+	It parses the file into a JS object, defines functions to retrieve genres for a given song and
+	load all music list. 
+*/
 var file = './data/musics.json';
 var getGenresFor;
 var musicFile = require('fs').readFileSync(file, 'utf8');
