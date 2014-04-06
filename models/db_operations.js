@@ -12,7 +12,7 @@ var mongoose = require('mongoose');
 var openDB;
 var updateRecordInDB;
 var userDocument;
-var userRegistry = require('./user_registry.js');
+var userRegistry = require('./users_registry.js');
 var userSchema;
 
 
