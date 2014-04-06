@@ -1,4 +1,4 @@
-var fs = require('fs'),
+var fs = require('fs');
 var request = require('supertest');
 var serverAddress = 'http://localhost:3000';
 
