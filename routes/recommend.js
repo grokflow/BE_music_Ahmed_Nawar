@@ -76,7 +76,6 @@ computeGenresScore = function(current_user, music_title) {
     //will result in NaN if no songs were played
     score /= current_user.getTotalSongsPlayed();
     
-
     if (score === 0 || isNaN(score)) { //no common genres or no songs played
         score = NO_COMMON_GENRE_SCORE;
     } else {
