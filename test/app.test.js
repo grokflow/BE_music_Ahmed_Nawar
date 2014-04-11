@@ -4,7 +4,7 @@ var request = require('supertest');
 var serverAddress = 'http://localhost:3000';
 
 describe('AxiomZen Music Recommendations Engine Test', function () {
-	var file, listenObj, followData = [], listenData = [];
+    var file, listenObj, followData = [], listenData = [];
     var followDataFilePath = __dirname + '/data/follows.json';
     var listenDataFilePath = __dirname + '/data/listen.json';
 
