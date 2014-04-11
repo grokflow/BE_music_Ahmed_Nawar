@@ -72,9 +72,12 @@ computeGenresScore = function(current_user, music_title) {
         if (current_user.hasMusicGenre(musicGenres[i]))
             score += current_user.hasMusicGenre(musicGenres[i]);
     }
-    score /= current_user.getTotalSongsPlayed();
 
-    if (score === 0) { 
+    //will result in NaN if no songs were played
+    score /= current_user.getTotalSongsPlayed();
+    
+
+    if (score === 0 || isNaN(score)) { //no common genres or no songs played
         score = NO_COMMON_GENRE_SCORE;
     } else {
         score /= numberOfGenres;
@@ -140,7 +143,6 @@ recommendTo = function(user_id, callback) {
             currentMusicRating *= FOLLOWEES_COEFFICIENT;            
             currentMusicRating += (GENRES_COEFFICIENT * computeGenresScore(current_user, currentSong));
             currentMusicRating *= (MUSIC_HISTORY_COEFFICIENT * computeMusicHistoryScore(current_user, currentSong));
-
             addToRecommendationListIfBetter(recommendationList, currentSong, currentMusicRating);
         }
 
