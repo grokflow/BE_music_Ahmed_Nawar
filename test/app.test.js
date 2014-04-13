@@ -27,7 +27,7 @@ describe('AxiomZen Music Recommendations Engine Test', function () {
     it('should not return any errors', function (done) {
         async.parallel([feedFollowData, feedListenData], recommend);
 
-        // feed follows.json to POST/follow endpoint
+        // feed follows.json to POST /follow endpoint
         function feedFollowData(callback) {
             async.each(followData, function (operation, followRequestDone) {
                 // parse from and to user ids
@@ -46,9 +46,10 @@ describe('AxiomZen Music Recommendations Engine Test', function () {
             }, callback);
         }
         
-         //feed listen.json to POST/listen endpoint 
+         //feed listen.json to POST /listen endpoint 
         function feedListenData(callback) {
-            async.each(listenData, function (body, listenRequestDone) {
+            // in series to avoid duplicate subodcuments for the same genre for a given user
+            async.eachSeries(listenData, function (body, listenRequestDone) {
                 request(serverAddress)
                 .post('/listen')
                 .send(body)
@@ -61,7 +62,7 @@ describe('AxiomZen Music Recommendations Engine Test', function () {
             }, callback);
         }
     
-        // GET/recommendations endpoint
+        // GET /recommendations endpoint
         function recommend(err, results) {
             if (err) return done(err);
             request(serverAddress)
