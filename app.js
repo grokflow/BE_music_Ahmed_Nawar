@@ -1,4 +1,4 @@
-var	db = require('./models/db_operations.js');
+var	db = require('./utils/db_operations.js');
 var	http = require('http');
 var	routes = require('./routes');
 var express = require('express');
@@ -31,5 +31,5 @@ var startServer = function (err) {
 }
 
 //start the server after connecting to the database server
-db.openDB('AxiomZenDB', startServer);
+db.open('AxiomZenDB', startServer);
 module.exports = app;  
