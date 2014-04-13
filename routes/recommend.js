@@ -25,12 +25,11 @@ var addToRecommendationListIfBetter;
 var computeFolloweesScore;
 var computeGenresScore;
 var computeMusicHistoryScore;
-var db = require('../models/db_operations.js');
 var initRecommendationList;
 var musicStore = require('../models/music_store.js');
 var recommendTo;
 var recommendMusic;
-var userRegistry = require('../models/users_registry.js');
+var User = require('../models/user.js').User;
 var validation = require('../utils/input-validator.js');
 
 const NO_COMMON_GENRE_SCORE = 0.1;
@@ -55,26 +54,28 @@ recommendMusic = function(req, res) {
 }
 
 // F(M) defined above
-computeFolloweesScore = function(current_user, followees_music_list, current_song) {
+computeFolloweesScore = function(current_song, followees_music_list, followees_count) {
     if (followees_music_list.hasOwnProperty(current_song))
-        return followees_music_list[current_song] / current_user.getFolloweesCount();
+        return followees_music_list[current_song] / followees_count;
 
     return 0;
 }
 
 // G(M) function defined above
-computeGenresScore = function(current_user, music_title) {
-    var musicGenres = musicStore.getGenresFor(music_title);
+computeGenresScore = function(current_song, user_genres_list, user_music_list) {
+    var musicGenres = musicStore.getGenresFor(current_song);
     var numberOfGenres = musicGenres.length;
     var score = 0;
 
+    // add a function to load genre list same like followees
     for (var i = 0; i < numberOfGenres; i++) {
-        if (current_user.hasMusicGenre(musicGenres[i]))
-            score += current_user.hasMusicGenre(musicGenres[i]);
+        var currentGenre = musicGenres[i];
+        if (user_genres_list.hasOwnProperty(currentGenre))
+            score += user_genres_list[currentGenre];
     }
 
     //will result in NaN if no songs were played
-    score /= current_user.getTotalSongsPlayed();
+    score /= user_music_list['totalSongsPlayed'];
     
     if (score === 0 || isNaN(score)) { //no common genres or no songs played
         score = NO_COMMON_GENRE_SCORE;
@@ -85,8 +86,8 @@ computeGenresScore = function(current_user, music_title) {
 }
 
 // N(M) function defined above
-computeMusicHistoryScore = function(current_user, current_song) {
-    if (current_user.hasListenedTo(current_song))
+computeMusicHistoryScore = function(current_song, user_music_list) {
+    if (user_music_list.hasOwnProperty(current_song))
         return 0;
     
     return NEW_MUSIC_SCORE;
@@ -121,33 +122,31 @@ initRecommendationList = function(count) {
 // the function responsible for compiling the recommendation list for a specific user
 // it iterates over all songs availbles and computes the relevancy score
 
-recommendTo = function(user_id, callback) {
-    userRegistry.getUser(user_id, getUserFolloweesMusicList);
+recommendTo = function(user_id, recommendationRequestDone) {
+    User.getUser(user_id, rateMusic);
 
-    function getUserFolloweesMusicList(current_user) {
-        current_user.discoverFolloweesMusic(rateMusic);
-    }
-
-    function rateMusic(current_user, followees_music_list) {
+    function rateMusic(current_user) {
         var musicList, recommendationList, result, currentMusicRating;
 
         musicList = musicStore.getAllMusic();
         //if number of needed recommended songs is greater than songs available to rate
         recommendationList = initRecommendationList(musicList.length < 5 ? musicList.length : RECOMMENDATIONS_COUNT);
         
-        for (var i = 0; i < musicList.length; i++) {
-            var currentSong = musicList[i];
+        current_user.compileLists(function (own_music_list, followees_music_list, own_genres_list, followees_count) {
+            for (var i = 0; i < musicList.length; i++) {
+                var currentSong = musicList[i];
                 
-            currentMusicRating =  computeFolloweesScore(current_user, followees_music_list, currentSong);
-            currentMusicRating *= FOLLOWEES_COEFFICIENT;            
-            currentMusicRating += (GENRES_COEFFICIENT * computeGenresScore(current_user, currentSong));
-            currentMusicRating *= (MUSIC_HISTORY_COEFFICIENT * computeMusicHistoryScore(current_user, currentSong));
-            addToRecommendationListIfBetter(recommendationList, currentSong, currentMusicRating);
-        }
+                currentMusicRating =  computeFolloweesScore(currentSong, followees_music_list, followees_count);
+                currentMusicRating *= FOLLOWEES_COEFFICIENT;            
+                currentMusicRating += (GENRES_COEFFICIENT * computeGenresScore(currentSong, own_genres_list, own_music_list));
+                currentMusicRating *= (MUSIC_HISTORY_COEFFICIENT * computeMusicHistoryScore(currentSong, own_music_list));
+                addToRecommendationListIfBetter(recommendationList, currentSong, currentMusicRating);
+            }
 
-        recommendationList.sort(compare);
-        result = recommendationList.map(function(e) { return e.music; });
-        callback(result);
+            recommendationList.sort(compare);
+            result = recommendationList.map(function(e) { return e.music; });
+            recommendationRequestDone(result);
+        });        
     }
 }
 

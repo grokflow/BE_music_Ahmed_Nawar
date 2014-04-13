@@ -1,39 +1,37 @@
 /*
-    This route defines the POST/follow endpoint. 
+    This route defines the POST /follow endpoint. 
 */
-var db = require('../models/db_operations.js');
 var follow;
 var followUser;
-var userRegistry = require('../models/users_registry.js');
+var User = require('../models/user.js').User;
 var validation = require('../utils/input-validator.js');
 
-//the endpoint for the POST request
+// POST /follow endpoint handler
 followUser = function(req, res) {
         var from = req.body.from, to = req.body.to;
         if (!validation.checkInput(from, 'userID') || !validation.checkInput(to, 'userID'))
             res.send(403, 'Forbidden user format');
 
-        follow(from, to, function() { 
+        follow(from, to, function(err) {
+            if (err) res.send(500, err); 
             res.send(200);
         });
 }
 
 // registering the follow relationship between 2 users to the user registry and database
-follow = function (from_userID, to_userID, callback) {
+follow = function (from_userID, to_userID, followRequestDone) {
     var fromUser, toUser;
-    userRegistry.getUser(from_userID, registerFollowee);
-    userRegistry.getUser(to_userID, registerFollowee);
+    User.getUser(from_userID, registerFollowee);
+    User.getUser(to_userID, registerFollowee);
     
-    function registerFollowee (user) {
-        if (user.userId === from_userID)
-            fromUser = user;
-        else if (user.userId === to_userID)
-            toUser = user;
+    function registerFollowee (current_user) {
+        if (current_user.userId === from_userID)
+            fromUser = current_user;
+        else if (current_user.userId === to_userID)
+            toUser = current_user;
 
         if (fromUser && toUser) {
-            fromUser.addFollowee(to_userID);
-            db.addToArrayInDB(from_userID, 'followees', to_userID);
-            callback();
+            fromUser.addFollowee(to_userID, followRequestDone);
         }
     }        
 }
